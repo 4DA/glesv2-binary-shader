@@ -244,8 +244,8 @@ void compile_program_binary( GLuint shader_program, const char* BINARY_FILENAME)
     myglGetProgramBinaryOES = (PFNGLGETPROGRAMBINARYOESPROC)eglGetProcAddress("glGetProgramBinaryOES");
 
     if (!myglGetProgramBinaryOES) {
-        fprintf(stderr, "Can not get glGetProgramBinaryOES binary function");
-        return;
+        fprintf(stderr, "Can not get glGetProgramBinaryOES function");
+        exit(EXIT_FAILURE);
     }
 
     myglGetProgramBinaryOES (shader_program, bin_size, &bytesWritten, &bin_format, buffer);
@@ -263,8 +263,6 @@ void compile_program_binary( GLuint shader_program, const char* BINARY_FILENAME)
     
     fclose(bShFile);
     free(buffer);
-
-    fclose(bShFile);
 }
 
 
@@ -338,7 +336,6 @@ create_shader(struct window *window, const char *source, GLenum shader_type)
 }
 
 
-
 static void
 init_gl(struct window *window)
 {
@@ -352,7 +349,16 @@ init_gl(struct window *window)
 	program = glCreateProgram();
 
     if (g_UseBinary) {
-        load_program_binary("simple-egl-shader.fx", 12, program);
+        load_program_binary("simple-egl-shader.fx", 0x9130, program);
+
+        glUseProgram(program);
+	
+        window->gl.pos = 0;
+        window->gl.col = 1;
+
+        glBindAttribLocation(program, window->gl.pos, "pos");
+        glBindAttribLocation(program, window->gl.col, "color");
+
     }
     else
     {
@@ -891,9 +897,9 @@ main(int argc, char **argv)
 			window.buffer_size = 16;
 		else if (strcmp("-b", argv[i]) == 0)
 			window.frame_sync = 0;
-        else if (strcmp("--compile-binary-shader", argv[i]))
+        else if (strcmp("--compile-binary-shader", argv[i]) == 0)
             g_CompileBinary = 1;
-        else if (strcmp("--use-binary-shader", argv[i]))
+        else if (strcmp("--use-binary-shader", argv[i]) == 0)
             g_UseBinary = 1;
 		else if (strcmp("-h", argv[i]) == 0)
 			usage(EXIT_SUCCESS);
