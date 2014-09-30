@@ -286,9 +286,9 @@ void load_program_binary(const char* myBinaryFileName, GLenum binaryFormat, GLui
 
     myglProgramBinaryOES = (PFNGLPROGRAMBINARYOESPROC)eglGetProcAddress("glProgramBinaryOES");
 
-    if (!myglGetProgramBinaryOES) {
-        fprintf(stderr, "Can not get glProgramBinaryOES binary function");
-        return;
+    if (!myglProgramBinaryOES) {
+        fprintf(stderr, "Can not get glProgramBinaryOES function\n");
+        exit(EXIT_FAILURE);
     }
     
     //
